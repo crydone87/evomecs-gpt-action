@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "EVOMECS Data",
+  "name_for_model": "evomecs_data",
+  "description_for_human": "Abruf von Artikelinstanzen über die EVOMECS API",
+  "description_for_model": "Liefere eine Liste von Artikelinstanzen aus der EVOMECS Datenbank.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://<dein-username>.github.io/evomecs-gpt-action/openapi.json",
+    "is_user_authenticated": false
+  },
+  "logo_url": "https://<dein-username>.github.io/evomecs-gpt-action/logo.png",
+  "contact_email": "support@evomecs.com",
+  "legal_info_url": "https://evomecs.com/legal"
+}
