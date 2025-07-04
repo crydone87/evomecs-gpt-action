@@ -1,0 +1,71 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "EVOMECS ArticleInstances API",
+    "version": "1.0.0",
+    "description": "API for retrieving article instances from EVOMECS"
+  },
+  "servers": [
+    {
+      "url": "https://demo.evomecs.app"
+    }
+  ],
+  "paths": {
+    "/mes/tables/ArticleInstances": {
+      "get": {
+        "operationId": "getArticleInstances",
+        "summary": "Artikelinstanzen abholen",
+        "description": "Liefert eine Liste von Artikelinstanzen zurück.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximale Anzahl der zurückgegebenen Ergebnisse",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "descending",
+            "in": "query",
+            "description": "Sortierreihenfolge: true = absteigend",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste von Artikelinstanzen",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
