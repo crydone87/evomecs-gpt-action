@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "EVOMECS ArticleInstances API",
-    "version": "1.0.0",
-    "description": "API for retrieving article instances from EVOMECS"
+    "title": "ArticleInstances API",
+    "description": "API for accessing article instances",
+    "version": "1.0.0"
   },
   "servers": [
     {
@@ -14,56 +14,208 @@
     "/mes/tables/ArticleInstances": {
       "get": {
         "operationId": "getArticleInstances",
-        "summary": "Artikelinstanzen abholen",
-        "description": "Liefert eine Liste von Artikelinstanzen zurück.",
+        "summary": "Get a list of Article Instances",
+        "description": "Retrieve a list of article instances.",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
-            "description": "Maximale Anzahl der zurückgegebenen Ergebnisse",
+            "description": "Maximum number of results to return",
             "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 10
-            }
+            "schema": { "type": "integer", "default": 10000 }
           },
           {
             "name": "descending",
             "in": "query",
-            "description": "Sortierreihenfolge: true = absteigend",
+            "description": "Sort in descending order",
             "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": true
-            }
+            "schema": { "type": "boolean", "default": true }
           }
         ],
         "responses": {
           "200": {
-            "description": "Liste von Artikelinstanzen",
+            "description": "A list of article instances",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "createdAt": {
-                        "type": "string",
-                        "format": "date-time"
-                      }
-                    }
-                  }
+                  "items": { "$ref": "#/components/schemas/ArticleInstance" }
                 }
               }
             }
           }
+        }
+      }
+    },
+    "/Articles": {
+      "get": {
+        "operationId": "getArticle",
+        "summary": "Get a list of Articles",
+        "description": "Retrieve a list of articles",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of results to return",
+            "required": false,
+            "schema": { "type": "integer", "default": 1000 }
+          },
+          {
+            "name": "descending",
+            "in": "query",
+            "description": "Sort in descending order",
+            "required": false,
+            "schema": { "type": "boolean", "default": true }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of articles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Articles" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ArticleTypes": {
+      "get": {
+        "operationId": "getArticleTypes",
+        "summary": "Get a list of ArticleTypes",
+        "description": "Retrieve a list of article types",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of results to return",
+            "required": false,
+            "schema": { "type": "integer", "default": 1000 }
+          },
+          {
+            "name": "descending",
+            "in": "query",
+            "description": "Sort in descending order",
+            "required": false,
+            "schema": { "type": "boolean", "default": true }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of article types",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ArticleTypes" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ArticleInstanceArticleTypes": {
+      "get": {
+        "operationId": "getArticleInstanceArticleTypes",
+        "summary": "Get a list of ArticleInstanceArticleTypes",
+        "description": "Connector table between ArticleInstances and ArticleTypes",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of results to return",
+            "required": false,
+            "schema": { "type": "integer", "default": 1000 }
+          },
+          {
+            "name": "descending",
+            "in": "query",
+            "description": "Sort in descending order",
+            "required": false,
+            "schema": { "type": "boolean", "default": true }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of article instance article types",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ArticleInstanceArticleTypes" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ArticleInstance": {
+        "type": "object",
+        "properties": {
+          "articleInstanceID": { "type": "integer", "description": "Primary Key for ArticleInstance table" },
+          "name": { "type": "string", "description": "The name of the article instance" },
+          "description": { "type": "string", "nullable": true, "description": "The description of the article instance" },
+          "state": { "type": "string", "nullable": true, "description": "The state of the article instance" },
+          "deliveryDate": { "type": "string", "format": "date-time", "nullable": true, "description": "The delivery date of the article instance" },
+          "deactivationDate": { "type": "string", "format": "date-time", "nullable": true, "description": "The deactivation date of the article instance" },
+          "progressState": { "type": "string", "nullable": true, "description": "The progress state of the article instance" },
+          "totalTimeEstimated": { "type": "number", "format": "float", "nullable": true, "description": "The total time estimated for the article instance" },
+          "totalTimeConsumed": { "type": "number", "format": "float", "nullable": true, "description": "The total time consumed for the article instance" },
+          "resourceConsumptionState": { "type": "string", "nullable": true, "description": "The resource consumption state of the article instance" },
+          "price": { "type": "number", "format": "float", "nullable": true, "description": "The price of the article instance" },
+          "currency": { "type": "string", "nullable": true, "description": "The currency of the article instance" },
+          "statefulAsLocation": { "type": "boolean", "description": "Indicates if the article instance is stateful as location" },
+          "articleIDInstance": { "type": "integer", "description": "Foreign key to table Articles" },
+          "article": { "type": "string", "nullable": true, "description": "The article related to the instance" },
+          "locationIDLocation": { "type": "integer", "nullable": true, "description": "Foreign key to table Locations" },
+          "locationLocation": { "type": "string", "nullable": true, "description": "The location related to the article instance" },
+          "createdAt": { "type": "string", "format": "date-time", "description": "The creation timestamp of the article instance" },
+          "articleInstanceIDPredecessor": { "type": "integer", "nullable": true, "description": "The identifier for the predecessor article instance" }
+        }
+      },
+      "Articles": {
+        "type": "object",
+        "properties": {
+          "articleID": { "type": "integer", "description": "Primary key for Articles" },
+          "name": { "type": "string", "description": "The name of the article" },
+          "description": { "type": "string", "nullable": true, "description": "The description of the article" },
+          "articleNumber": { "type": "string", "nullable": true, "description": "The article number" },
+          "visibilityStatus": { "type": "string", "nullable": true, "description": "The visibility status of the article" },
+          "resourceType": { "type": "string", "nullable": true, "description": "The resource type of the article" },
+          "articleRequirements": { "type": "string", "nullable": true, "description": "The requirements for the article" },
+          "machineIDReference": { "type": "integer", "nullable": true, "description": "The machine ID reference" },
+          "machineReference": { "type": "string", "nullable": true, "description": "The machine reference" },
+          "presetMachineIDReference": { "type": "integer", "nullable": true, "description": "The preset machine ID reference" },
+          "presetMachineReference": { "type": "string", "nullable": true, "description": "The preset machine reference" }
+        }
+      },
+      "ArticleTypes": {
+        "type": "object",
+        "properties": {
+          "articleTypeID": { "type": "integer", "description": "Primary key for an ArticleType" },
+          "name": { "type": "string", "description": "The name of the article type" },
+          "kind": { "type": "string", "description": "The kind of the article type" },
+          "locationCarrierProperties": { "type": "string", "nullable": true, "description": "Location carrier properties of the article type" },
+          "metric": { "type": "integer", "description": "The metric associated with the article type" }
+        }
+      },
+      "ArticleInstanceArticleTypes": {
+        "type": "object",
+        "properties": {
+          "articleInstanceArticleTypeID": { "type": "integer", "description": "Unique identifier for an article instance type" },
+          "articleID": { "type": "integer", "description": "Foreign key for table Articles" },
+          "article": { "type": "string", "nullable": true, "description": "The article" },
+          "articleTypeID": { "type": "integer", "description": "Foreign key for table ArticleTypes" },
+          "articleType": { "type": "string", "nullable": true, "description": "The article type" }
         }
       }
     }
