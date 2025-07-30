@@ -1,0 +1,2161 @@
+openapi: 3.1.0
+info:
+  title: GraphQL-to-REST API
+  description: REST-Abbildung aller Haupttypen aus GraphQL und Metaschema. Alle Felder und Fremdschlüssel sind mit ausführlichen Beschreibungen versehen.
+  version: 1.2.1
+servers:
+  - url: https://demo-v1.evomecs.app/exporter
+    description: EVOMECS Exporter Schnittstelle
+
+paths:
+  /Apps:
+    get:
+      operationId: getApps
+      summary: Liste aller Apps
+      responses:
+        "200":
+          description: Liste von Apps
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/App"
+  /Commits:
+    get:
+      operationId: getCommits
+      summary: Liste aller Commits
+      responses:
+        "200":
+          description: Liste von Commits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Commit"
+  /CostCenters:
+    get:
+      operationId: getCostCenters
+      summary: Liste aller Kostenstellen
+      responses:
+        "200":
+          description: Liste von Kostenstellen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CostCenter"
+  /CostRates:
+    get:
+      operationId: getCostRates
+      summary: Liste aller Kostensätze
+      responses:
+        "200":
+          description: Liste von Kostensätzen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CostRate"
+  /CamSystems:
+    get:
+      operationId: getCamSystems
+      summary: Liste aller CAM-Systeme
+      responses:
+        "200":
+          description: Liste von CAM-Systemen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CamSystem"
+  /CamProjects:
+    get:
+      operationId: getCamProjects
+      summary: Liste aller CAM-Projekte
+      responses:
+        "200":
+          description: Liste von CAM-Projekten
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CamProject"
+  /DeviceAlarms:
+    get:
+      operationId: getDeviceAlarms
+      summary: Liste aller Gerätealarme
+      responses:
+        "200":
+          description: Liste von Gerätealarmen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DeviceAlarm"
+  /DeviceAlarmTypes:
+    get:
+      operationId: getDeviceAlarmTypes
+      summary: Liste aller Gerätealarmtypen
+      responses:
+        "200":
+          description: Liste von Gerätealarmtypen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DeviceAlarmType"
+
+components:
+  schemas:
+    App:
+      type: object
+      description: Anwendung im System, z. B. für Integrationen oder Services.
+      properties:
+        appID:
+          type: integer
+          description: Eindeutige ID der App.
+        name:
+          type: string
+          description: Anzeigename der App.
+        baseUrl:
+          type: string
+          description: Basis-URL der App-Integration.
+        storeID:
+          type: string
+          format: uuid
+          description: Externe Store-Referenz (UUID).
+
+    Commit:
+      type: object
+      description: Versionskontroll-Commit, z. B. für Artikel oder Prozesse.
+      properties:
+        commitID:
+          type: integer
+          description: Eindeutige Commit-ID.
+        createdAt:
+          type: string
+          format: date-time
+          description: Zeitpunkt der Commiterstellung.
+        updatedAt:
+          type: string
+          format: date-time
+          description: Zeitpunkt der letzten Änderung.
+        message:
+          type: string
+          description: Commit-Beschreibung oder Nachricht.
+        state:
+          type: string
+          format: uuid
+          description: Status des Commits (UUID).
+        articleInstanceIDCreator:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), die den Commit erstellt hat.
+        repositoryIDOwner:
+          type: integer
+          description: Verweis auf Repository (ID), Besitzer des Commits.
+        commitIDParent:
+          type: integer
+          description: Verweis auf vorherigen Commit (Parent, Commit-ID).
+
+    CostCenter:
+      type: object
+      description: Kostenstelle im Unternehmen, etwa für Reporting oder Kostenrechnung.
+      properties:
+        costCenterID:
+          type: integer
+          description: Eindeutige ID der Kostenstelle.
+        description:
+          type: string
+          description: Beschreibung der Kostenstelle.
+        synchronization:
+          type: string
+          format: uuid
+          description: Synchronisations-ID (UUID), externe Referenz.
+
+    CostRate:
+      type: object
+      description: Kostensatz, der für eine Kostenstelle hinterlegt ist.
+      properties:
+        costRateID:
+          type: integer
+          description: Eindeutige ID des Kostensatzes.
+        hourlyRateID:
+          type: integer
+          description: Interne ID für den Stundensatz.
+        costCenterIDOwner:
+          type: integer
+          description: Verweis auf CostCenter (ID), zugeordnete Kostenstelle.
+        hourlyRate:
+          type: number
+          format: float
+          description: Kosten pro Stunde.
+        validityBegin:
+          type: string
+          format: date-time
+          description: Startdatum der Gültigkeit.
+        validityEnd:
+          type: string
+          format: date-time
+          description: Enddatum der Gültigkeit.
+
+    CamSystem:
+      type: object
+      description: CAM-System, z. B. für Fertigungsdaten oder Schnittstellen.
+      properties:
+        camSystemID:
+          type: integer
+          description: Eindeutige ID des CAM-Systems.
+        name:
+          type: string
+          description: Name des CAM-Systems.
+        identifier:
+          type: string
+          format: uuid
+          description: Interne oder externe Kennung (UUID).
+        pathPositionMapping:
+          type: string
+          description: Zuordnung für Pfad-Positionen im System.
+
+    CamProject:
+      type: object
+      description: CAM-Projekt, etwa als Fertigungsprojekt oder NC-Programm.
+      properties:
+        camProjectID:
+          type: integer
+          description: Eindeutige ID des CAM-Projekts.
+        name:
+          type: string
+          description: Name des CAM-Projekts.
+        path:
+          type: string
+          description: Projektpfad (z. B. Dateiablage).
+        simulationMapping:
+          type: string
+          description: Simulationseinstellungen oder -referenz.
+        camSystemIDInstance:
+          type: integer
+          description: Verweis auf CamSystem (ID), zugeordnetes CAM-System.
+        repositoryIDOwner:
+          type: integer
+          description: Verweis auf Repository (ID), Besitzer des CAM-Projekts.
+
+    DeviceAlarm:
+      type: object
+      description: Alarmereignis eines Geräts oder einer Maschine.
+      properties:
+        deviceAlarmID:
+          type: integer
+          description: Eindeutige ID des Gerätealarms.
+        deviceTimestamp:
+          type: string
+          format: date-time
+          description: Zeitstempel des Alarms auf dem Gerät.
+        begin:
+          type: string
+          format: date-time
+          description: Startzeit des Alarms.
+        end:
+          type: string
+          format: date-time
+          description: Endzeit des Alarms.
+        deviceAlarmTypeIDInstance:
+          type: integer
+          description: Verweis auf DeviceAlarmType (ID), Art des Alarms.
+
+    DeviceAlarmType:
+      type: object
+      description: Typ eines Gerätealarms, z. B. für unterschiedliche Fehlerklassen.
+      properties:
+        deviceAlarmTypeID:
+          type: integer
+          description: Eindeutige ID des Alarmtyps.
+        number:
+          type: string
+          description: Nummer oder Kennung des Alarmtyps.
+        text:
+          type: string
+          description: Alarmtext.
+        description:
+          type: string
+          description: Beschreibung des Alarmtyps.
+        cause:
+          type: string
+          description: Fehlerursache (Text).
+        action:
+          type: string
+          description: Vorgeschlagene Aktion.
+        userText:
+          type: string
+          description: Benutzerdefinierter Alarmtext.
+        userDescription:
+          type: string
+          description: Benutzerdefinierte Beschreibung.
+        userCause:
+          type: string
+          description: Benutzerdefinierte Fehlerursache.
+        userAction:
+          type: string
+          description: Benutzerdefinierte Aktion.
+        articleInstanceIDOwner:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Besitzer dieses Alarmtyps.
+    Order:
+      type: object
+      description: Auftrag im System, z. B. für die Produktion eines Artikels.
+      properties:
+        orderID:
+          type: integer
+          description: Eindeutige ID des Auftrags.
+        name:
+          type: string
+          description: Name des Auftrags.
+        description:
+          type: string
+          description: Beschreibung oder Zusatzinfos zum Auftrag.
+        createdAt:
+          type: string
+          format: date-time
+          description: Zeitpunkt der Auftragserstellung.
+        deliveryDate:
+          type: string
+          format: date-time
+          description: Geplantes Lieferdatum.
+        erpIdentifyer:
+          type: string
+          description: Kennung im ERP-System.
+        version:
+          type: string
+          format: uuid
+          description: Auftragsversionsnummer (UUID).
+        lastStructureUpdate:
+          type: string
+          format: date-time
+          description: Zeitpunkt der letzten Strukturänderung.
+        orderTypeIDInstance:
+          type: integer
+          description: Verweis auf OrderType (ID), Typ des Auftrags.
+        repositoryIDOwner:
+          type: integer
+          description: Verweis auf Repository (ID), Besitzer des Auftrags.
+
+    OrderSetting:
+      type: object
+      description: Einstellung oder Option, die für einen Auftrag oder Artikel gilt.
+      properties:
+        orderSettingID:
+          type: integer
+          description: Eindeutige ID der Einstellung.
+        kind:
+          type: string
+          format: uuid
+          description: Typ der Einstellung (UUID).
+        value:
+          type: string
+          description: Wert der Einstellung.
+        description:
+          type: string
+          description: Beschreibung der Einstellung.
+        articleIDOwner:
+          type: integer
+          description: Verweis auf Article (ID), für den die Einstellung gilt.
+
+    OrderTechnology:
+      type: object
+      description: Zuordnung einer Technologie zu einem Auftrag.
+      properties:
+        orderTechnologyID:
+          type: integer
+          description: Eindeutige ID der Auftrags-Technologie-Zuordnung.
+        name:
+          type: string
+          description: Name der Technologie.
+
+    OrderTemplate:
+      type: object
+      description: Vorlage für die Anlage eines Auftrags.
+      properties:
+        orderTemplateID:
+          type: integer
+          description: Eindeutige ID der Auftragvorlage.
+        name:
+          type: string
+          description: Name der Auftragvorlage.
+        description:
+          type: string
+          description: Beschreibung der Vorlage.
+        orderTypeIDOwner:
+          type: integer
+          description: Verweis auf OrderType (ID), Auftragstyp der Vorlage.
+        orderIDReference:
+          type: integer
+          description: Verweis auf Order (ID), zugehöriger Referenzauftrag.
+
+    OrderType:
+      type: object
+      description: Klassifikation oder Typ eines Auftrags.
+      properties:
+        orderTypeID:
+          type: integer
+          description: Eindeutige ID des Auftragstyps.
+        name:
+          type: string
+          description: Bezeichnung des Auftragstyps.
+        metric:
+          type: integer
+          description: Metrik oder Ordnungswert für den Auftragstyp.
+
+    OrderPosition:
+      type: object
+      description: Einzelne Position innerhalb eines Auftrags, z. B. ein Bauteil oder eine Baugruppe.
+      properties:
+        orderPositionID:
+          type: integer
+          description: Eindeutige ID der Auftragsposition.
+        type:
+          type: string
+          format: uuid
+          description: Typ der Position (UUID).
+        name:
+          type: string
+          description: Bezeichnung der Position.
+        description:
+          type: string
+          description: Beschreibung der Position.
+        amount:
+          type: integer
+          description: Bestellte Menge dieser Position.
+        erpIdentifyer:
+          type: string
+          description: Kennung der Position im ERP-System.
+        drawingNumber:
+          type: string
+          description: Zeichnungsnummer.
+        priority:
+          type: integer
+          description: Priorität dieser Position.
+        number:
+          type: string
+          description: Positionsnummer.
+        approvalState:
+          type: string
+          format: uuid
+          description: Freigabestatus der Position (UUID).
+        deliveryDate:
+          type: string
+          format: date-time
+          description: Gewünschtes Lieferdatum.
+        progressState:
+          type: string
+          format: uuid
+          description: Bearbeitungsfortschritt der Position (UUID).
+        tasksTotal:
+          type: integer
+          description: Gesamtanzahl der Aufgaben zu dieser Position.
+        ownTasksTotalTimeEstimated:
+          type: integer
+          description: Geschätzte Zeit für eigene Aufgaben (Minuten).
+        ownTasksTotalTimeConsumed:
+          type: integer
+          description: Tatsächliche Zeit für eigene Aufgaben (Minuten).
+        ownTasksTotalTimeCalculated:
+          type: integer
+          description: Berechnete Zeit für eigene Aufgaben (Minuten).
+        subTasksTotalTimeEstimated:
+          type: integer
+          description: Geschätzte Zeit für Unteraufgaben (Minuten).
+        subTasksTotalTimeConsumed:
+          type: integer
+          description: Tatsächliche Zeit für Unteraufgaben (Minuten).
+        subTasksTotalTimeCalculated:
+          type: integer
+          description: Berechnete Zeit für Unteraufgaben (Minuten).
+        subTasksTotal:
+          type: integer
+          description: Gesamtzahl der Unteraufgaben.
+        subTasksInProgress:
+          type: integer
+          description: Anzahl der laufenden Unteraufgaben.
+        subTasksFinished:
+          type: integer
+          description: Anzahl der abgeschlossenen Unteraufgaben.
+        tasksOvershot:
+          type: integer
+          description: Anzahl der überfälligen Aufgaben.
+        tasksInProgress:
+          type: integer
+          description: Anzahl der laufenden Aufgaben.
+        tasksFinished:
+          type: integer
+          description: Anzahl der erledigten Aufgaben.
+        visibilityStatus:
+          type: string
+          format: uuid
+          description: Sichtbarkeitsstatus (UUID).
+        lastStructureUpdate:
+          type: string
+          format: date-time
+          description: Zeitpunkt der letzten Strukturänderung.
+        orderIDOwner:
+          type: integer
+          description: Verweis auf Order (ID), zugehöriger Auftrag.
+        orderPositionIDParent:
+          type: integer
+          description: Verweis auf OrderPosition (ID), übergeordnete Position.
+        repositoryIDOwner:
+          type: integer
+          description: Verweis auf Repository (ID), Besitzer dieser Position.
+        articleProvisionIDInstance:
+          type: integer
+          description: Verweis auf ArticleProvision (ID), bereitgestellter Artikel.
+    OrderOperation:
+      type: object
+      description: Vorgang oder Arbeitsschritt, der einer Auftragsposition zugeordnet ist.
+      properties:
+        orderOperationID:
+          type: integer
+          description: Eindeutige ID des Arbeitsgangs.
+        name:
+          type: string
+          description: Name oder Bezeichnung des Arbeitsgangs.
+        timePlanned:
+          type: integer
+          description: Geplante Zeit für den Arbeitsgang (Minuten).
+        plannedStart:
+          type: string
+          format: date-time
+          description: Geplanter Startzeitpunkt des Arbeitsgangs.
+        description:
+          type: string
+          description: Beschreibung des Arbeitsgangs.
+        segoniIdentifyer:
+          type: string
+          description: Interne oder externe Kennung für den Arbeitsgang.
+        orderPositionIDOwner:
+          type: integer
+          description: Verweis auf OrderPosition (ID), zugehörige Position.
+        costCenterIDReporting:
+          type: integer
+          description: Verweis auf CostCenter (ID), für das Reporting.
+    ArticleProvision:
+      type: object
+      description: Bereitstellung eines Artikels für einen bestimmten Zweck, z. B. als Rohling oder Zwischenprodukt.
+      properties:
+        articleProvisionID:
+          type: integer
+          description: Eindeutige ID der Artikelbereitstellung.
+        name:
+          type: string
+          description: Name der Bereitstellung.
+        description:
+          type: string
+          description: Beschreibung der Artikelbereitstellung.
+        approvalState:
+          type: string
+          format: uuid
+          description: Freigabestatus (UUID).
+        visibilityStatus:
+          type: string
+          format: uuid
+          description: Sichtbarkeitsstatus (UUID).
+        articleIDOwner:
+          type: integer
+          description: Verweis auf Article (ID), Besitzer des bereitgestellten Artikels.
+        articleProvisionTypeIDInstance:
+          type: integer
+          description: Verweis auf ArticleProvisionType (ID), Typ der Bereitstellung.
+        lastStructureUpdate:
+          type: string
+          format: date-time
+          description: Zeitpunkt der letzten Strukturänderung.
+        rawMaterialIDRequirement:
+          type: integer
+          description: Verweis auf RawMaterial (ID), erforderliches Rohmaterial.
+        erpIdentifier:
+          type: string
+          description: ERP-Kennung für diese Bereitstellung.
+        priority:
+          type: integer
+          description: Priorität dieser Bereitstellung.
+        electrodeLookupBehaviour:
+          type: string
+          format: uuid
+          description: Verhaltensweise für Elektrodensuche (UUID).
+
+    Operation:
+      type: object
+      description: Vorgang, der im Fertigungsprozess ausgeführt wird.
+      properties:
+        operationID:
+          type: integer
+          description: Eindeutige ID des Vorgangs.
+        name:
+          type: string
+          description: Name oder Bezeichnung des Vorgangs.
+        description:
+          type: string
+          description: Beschreibung des Vorgangs.
+        approvalState:
+          type: string
+          format: uuid
+          description: Freigabestatus (UUID).
+        preparationTime:
+          type: integer
+          description: Rüstzeit (Minuten).
+        finalizationTime:
+          type: integer
+          description: Zeit zur Fertigstellung (Minuten).
+        taskReadynessBehaviour:
+          type: string
+          format: uuid
+          description: Verhalten der Aufgabenbereitschaft (UUID).
+        taskReadyBehaviourOnRequirement:
+          type: string
+          format: uuid
+          description: Verhalten bei Anforderung von Aufgabenbereitschaft (UUID).
+        timePlanned:
+          type: integer
+          description: Geplante Zeit für den Vorgang (Minuten).
+        planningWeight:
+          type: integer
+          description: Gewichtung des Vorgangs in der Planung.
+        articleProvisionIDOwner:
+          type: integer
+          description: Verweis auf ArticleProvision (ID), Besitzer der Bereitstellung.
+        workplaceIDAssignee:
+          type: integer
+          description: Verweis auf Workplace (ID), ausführender Arbeitsplatz.
+        lastStructureUpdate:
+          type: string
+          format: date-time
+          description: Zeitpunkt der letzten Strukturänderung.
+        erpIdentifier:
+          type: string
+          description: ERP-Kennung des Vorgangs.
+        erpStartTime:
+          type: string
+          format: date-time
+          description: ERP-Startzeit.
+        erpEndTime:
+          type: string
+          format: date-time
+          description: ERP-Endzeit.
+        articleProvisionIDHistory:
+          type: integer
+          description: Verweis auf ArticleProvision (ID), Historie.
+        technologyIDInstance:
+          type: integer
+          description: Verweis auf Technology (ID), verwendete Technologie.
+        repositoryIDOwner:
+          type: integer
+          description: Verweis auf Repository (ID), Besitzer des Vorgangs.
+        operationIDPredecessor:
+          type: integer
+          description: Verweis auf Operation (ID), Vorgänger-Vorgang.
+        articleInstanceIDProposal:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), vorgeschlagene Instanz.
+        mountingPositionContextIDRequirement:
+          type: integer
+          description: Verweis auf MountingPositionContext (ID), benötigter Kontext.
+
+    Technology:
+      type: object
+      description: Technologie, die im Fertigungsprozess verwendet wird.
+      properties:
+        technologyID:
+          type: integer
+          description: Eindeutige ID der Technologie.
+        name:
+          type: string
+          description: Name der Technologie.
+        identificationSuffix:
+          type: string
+          description: Identifikationssuffix.
+        identifyer:
+          type: string
+          format: uuid
+          description: Interne oder externe Kennung (UUID).
+        taskPlanningType:
+          type: string
+          format: uuid
+          description: Typ der Aufgabenplanung (UUID).
+        thumbnail:
+          type: string
+          description: Vorschaubild (URL oder Base64).
+        metric:
+          type: integer
+          description: Ordnungswert für die Technologie.
+        color:
+          type: string
+          description: Farbcode der Technologie.
+        timePlannedProposal:
+          type: integer
+          description: Vorgeschlagene Planzeit (Minuten).
+        preparationTime:
+          type: integer
+          description: Vorgeschlagene Rüstzeit (Minuten).
+        finalizationTime:
+          type: integer
+          description: Vorgeschlagene Abschlusszeit (Minuten).
+        standardTaskReadynessBehaviour:
+          type: string
+          format: uuid
+          description: Standardverhalten für Aufgabenbereitschaft (UUID).
+        enableRoughPlanning:
+          type: boolean
+          description: Gibt an, ob Grobplanung aktiviert ist.
+        visibilityStatus:
+          type: string
+          format: uuid
+          description: Sichtbarkeitsstatus (UUID).
+        executionMethod:
+          type: string
+          format: uuid
+          description: Ausführungsmethode (UUID).
+        costCenterIDReporting:
+          type: integer
+          description: Verweis auf CostCenter (ID), Kostenstelle für Reporting.
+        taskReadyBehaviourOnRequirement:
+          type: string
+          format: uuid
+          description: Verhalten bei Aufgabenanforderung (UUID).
+        roleIDExecutor:
+          type: integer
+          description: Verweis auf Role (ID), auszuführende Rolle.
+
+    Approval:
+      type: object
+      description: Freigabeereignis im Prozess (z. B. für Bauteile, Positionen oder Vorgänge).
+      properties:
+        approvalID:
+          type: integer
+          description: Eindeutige ID der Freigabe.
+        comment:
+          type: string
+          description: Freigabekommentar.
+        state:
+          type: string
+          format: uuid
+          description: Status der Freigabe (UUID).
+        begin:
+          type: string
+          format: date-time
+          description: Startzeit der Freigabe.
+        end:
+          type: string
+          format: date-time
+          description: Endzeit der Freigabe.
+        duration:
+          type: integer
+          description: Dauer der Freigabe in Minuten.
+        annihilationComment:
+          type: string
+          description: Kommentar bei Aufhebung der Freigabe.
+        approvalTemplateIDInstance:
+          type: integer
+          description: Verweis auf ApprovalTemplate (ID), verwendete Vorlage.
+        taskIDOwner:
+          type: integer
+          description: Verweis auf TaskModel (ID), Aufgabe zu dieser Freigabe.
+        articleInstanceIDOwner:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Instanz zu dieser Freigabe.
+        articleInstanceIDExecutor:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Ausführender der Freigabe.
+        articleInstanceIDAnnihilator:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Aufhebender.
+        articleInstanceIDMutator:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), letzter Bearbeiter.
+
+    ApprovalTemplate:
+      type: object
+      description: Vorlage für Freigaben.
+      properties:
+        approvalTemplateID:
+          type: integer
+          description: Eindeutige ID der Freigabevorlage.
+        createdAt:
+          type: string
+          format: date-time
+          description: Zeitpunkt der Erstellung der Vorlage.
+        description:
+          type: string
+          description: Beschreibung der Vorlage.
+        behavior:
+          type: string
+          format: uuid
+          description: Verhaltensweise (UUID).
+        operationIDOwner:
+          type: integer
+          description: Verweis auf Operation (ID), zugehöriger Vorgang.
+        articleProvisionIDOwner:
+          type: integer
+          description: Verweis auf ArticleProvision (ID), zugehörige Bereitstellung.
+
+    ApprovalTemplateItem:
+      type: object
+      description: Einzelnes Element einer Freigabevorlage.
+      properties:
+        approvalTemplateItemID:
+          type: integer
+          description: Eindeutige ID des Vorlagen-Elements.
+        name:
+          type: string
+          description: Name des Elements.
+        description:
+          type: string
+          description: Beschreibung des Elements.
+        behaviour:
+          type: string
+          format: uuid
+          description: Verhalten (UUID).
+        visibility:
+          type: string
+          format: uuid
+          description: Sichtbarkeit (UUID).
+        approvalItemTypeIDInstance:
+          type: integer
+          description: Verweis auf ApprovalItemType (ID), Typ des Elements.
+        approvalTemplateIDOwner:
+          type: integer
+          description: Verweis auf ApprovalTemplate (ID), Vorlage.
+        repositoryIDOwner:
+          type: integer
+          description: Verweis auf Repository (ID), Besitzer des Elements.
+        metric:
+          type: integer
+          description: Ordnungswert oder Messwert.
+
+    ApprovalItemType:
+      type: object
+      description: Typisierung eines Freigabe-Elements.
+      properties:
+        approvalItemTypeID:
+          type: integer
+          description: Eindeutige ID des Typs.
+        name:
+          type: string
+          description: Name des Typs.
+        description:
+          type: string
+          description: Beschreibung des Typs.
+        visibilityState:
+          type: string
+          format: uuid
+          description: Sichtbarkeitsstatus (UUID).
+        behaviour:
+          type: string
+          format: uuid
+          description: Verhalten (UUID).
+        type:
+          type: string
+          format: uuid
+          description: Datentyp (UUID).
+        kind:
+          type: string
+          format: uuid
+          description: Art des Typs (UUID).
+        unit:
+          type: string
+          format: uuid
+          description: Maßeinheit (UUID).
+        unitScale:
+          type: string
+          format: uuid
+          description: Skala der Maßeinheit (UUID).
+        unitPrefix:
+          type: string
+          description: Präfix der Maßeinheit.
+        standardFormatting:
+          type: string
+          description: Standardformatierung.
+        enableComments:
+          type: boolean
+          description: Gibt an, ob Kommentare erlaubt sind.
+        metric:
+          type: integer
+          description: Metrik für den Typ.
+
+    ApprovalItem:
+      type: object
+      description: Einzelne Instanz eines Freigabe-Elements (z. B. eine Entscheidung, Checkbox, Wert).
+      properties:
+        approvalItemID:
+          type: integer
+          description: Eindeutige ID des Elements.
+        comment:
+          type: string
+          description: Kommentar zum Element.
+        checked:
+          type: boolean
+          description: Gibt an, ob das Element abgehakt/ausgewählt ist.
+        value:
+          type: integer
+          description: Wert des Elements.
+        begin:
+          type: string
+          format: date-time
+          description: Startzeitpunkt.
+        end:
+          type: string
+          format: date-time
+          description: Endzeitpunkt.
+        approvalIDOwner:
+          type: integer
+          description: Verweis auf Approval (ID), zugehörige Freigabe.
+        visibility:
+          type: string
+          format: uuid
+          description: Sichtbarkeit (UUID).
+        approvalTemplateItemIDInstance:
+          type: integer
+          description: Verweis auf ApprovalTemplateItem (ID), Instanz des Vorlagen-Elements.
+        articleInstanceIDExecutor:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Ausführender.
+        articleInstanceIDAnnihilator:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Aufhebender.
+        articleInstanceIDMutator:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), letzter Bearbeiter.
+
+    ApprovalItemTypeProposalTechnology:
+      type: object
+      description: Zuordnung eines ApprovalItemType zu einer Technologie (Vorschlagslogik).
+      properties:
+        approvalItemTypeProposalTechnologyID:
+          type: integer
+          description: Eindeutige ID der Zuordnung.
+        approvalItemTypeID:
+          type: integer
+          description: Verweis auf ApprovalItemType (ID), Typ des Elements.
+        technologyID:
+          type: integer
+          description: Verweis auf Technology (ID), zugeordnete Technologie.
+    ArticleInstance:
+      type: object
+      description: Einzelne Ausprägung eines Artikels in der Produktion (z. B. ein konkretes Werkstück/Bauteil).
+      properties:
+        articleInstanceID:
+          type: integer
+          description: Eindeutige ID der Artikelinstanz.
+        name:
+          type: string
+          description: Name oder Nummer der Artikelinstanz.
+        description:
+          type: string
+          description: Beschreibung oder Zusatzinformationen.
+        index:
+          type: integer
+          description: Laufende Nummer/Index der Instanz.
+        priority:
+          type: integer
+          description: Priorität der Bearbeitung.
+        state:
+          type: string
+          format: uuid
+          description: Status der Instanz (UUID).
+        deliveryDate:
+          type: string
+          format: date-time
+          description: Geplantes Lieferdatum dieser Instanz.
+        deactivationDate:
+          type: string
+          format: date-time
+          description: Datum der Deaktivierung, falls nicht mehr aktiv.
+        createdAt:
+          type: string
+          format: date-time
+          description: Zeitpunkt der Erstellung der Instanz.
+        progressState:
+          type: string
+          format: uuid
+          description: Bearbeitungsfortschritt (UUID).
+        totalTimeEstimated:
+          type: integer
+          description: Geschätzte Gesamtbearbeitungszeit in Minuten.
+        totalTimeConsumed:
+          type: integer
+          description: Tatsächlich verbrauchte Bearbeitungszeit in Minuten.
+        resourceConsumptionState:
+          type: integer
+          description: Verbrauchszustand von Ressourcen.
+        statefulAsLocation:
+          type: boolean
+          description: Gibt an, ob die Instanz als Lagerort gilt.
+        amount:
+          type: integer
+          description: Anzahl, falls mehrere Artikel gemeinsam verwaltet werden.
+        articleRequirementIDCreator:
+          type: integer
+          description: Verweis auf ArticleRequirement (ID), der diese Instanz erzeugt hat.
+        orderPositionIDOwner:
+          type: integer
+          description: Verweis auf OrderPosition (ID), zugehörige Auftragsposition.
+        articleIDInstance:
+          type: integer
+          description: Verweis auf Article (ID), übergeordneter Artikel.
+        taskIDCursor:
+          type: integer
+          description: Verweis auf TaskModel (ID), aktueller Task.
+        taskIDRequirement:
+          type: integer
+          description: Verweis auf TaskModel (ID), erforderlicher Task.
+        locationIDLocation:
+          type: integer
+          description: Verweis auf Location (ID), aktueller Lagerort.
+        articleInstanceIDPredecessor:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Vorgängerinstanz.
+        articleInstanceIDParent:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), übergeordnete Instanz.
+        repositoryIDOwner:
+          type: integer
+          description: Verweis auf Repository (ID), Besitzer der Instanz.
+        articleInstanceIDReservation:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), verknüpfte Reservierung.
+
+    NcProgram:
+      type: object
+      description: NC-Programm für eine Maschine, z. B. Fräsen, Bohren, etc.
+      properties:
+        ncProgramID:
+          type: integer
+          description: Eindeutige ID des NC-Programms.
+        name:
+          type: string
+          description: Name des NC-Programms.
+        description:
+          type: string
+          description: Beschreibung oder Zweck des NC-Programms.
+        type:
+          type: string
+          format: uuid
+          description: Typ des NC-Programms (UUID).
+        properties:
+          type: string
+          description: Zusätzliche Eigenschaften (z. B. JSON).
+        approvalState:
+          type: string
+          format: uuid
+          description: Freigabestatus (UUID).
+        feedMilling:
+          type: integer
+          description: Vorschub beim Fräsen.
+        s:
+          type: integer
+          description: Spindeldrehzahl.
+        rc:
+          type: integer
+          description: Schnittgeschwindigkeit.
+        feedApproach:
+          type: integer
+          description: Vorschub Annäherung.
+        feedDive:
+          type: integer
+          description: Vorschub Eintauchen.
+        feedRamp:
+          type: integer
+          description: Vorschub Rampe.
+        feedFullCut:
+          type: integer
+          description: Vorschub im Vollschnitt.
+        feedCorner:
+          type: integer
+          description: Vorschub in Ecken.
+        feedDrillingInit:
+          type: integer
+          description: Vorschub Bohrstart.
+        feedDrillingIn:
+          type: integer
+          description: Vorschub Bohren vorwärts.
+        feedDrillingOut:
+          type: integer
+          description: Vorschub Bohren rückwärts.
+        rcNext:
+          type: integer
+          description: Folgende Schnittgeschwindigkeit.
+        lcNext:
+          type: integer
+          description: Folgende Längengeschwindigkeit.
+        tableRotNext:
+          type: integer
+          description: Folgende Tischrotation.
+        durationCalculated:
+          type: integer
+          description: Berechnete Programmdauer (Minuten).
+        durationRealMinimal:
+          type: integer
+          description: Minimale Programmlaufzeit (Minuten).
+        toolpathLength:
+          type: integer
+          description: Werkzeugweg-Länge.
+        checkToolBreakAfterwards:
+          type: boolean
+          description: Soll nach Programmlauf Werkzeugbruch geprüft werden?
+        postProcessingIDOwner:
+          type: integer
+          description: Verweis auf PostProcessing (ID), Besitzer des NC-Programms.
+        postProcessingIDHistory:
+          type: integer
+          description: Verweis auf PostProcessing (ID), Historie.
+        ncProgramIDPredecessor:
+          type: integer
+          description: Verweis auf NcProgram (ID), Vorgänger-Programm.
+        ncProgramIDSuccessor:
+          type: integer
+          description: Verweis auf NcProgram (ID), Nachfolger-Programm.
+        toolUsageAfterwards:
+          type: string
+          format: uuid
+          description: Verwendetes Werkzeug nach Programm (UUID).
+        ix:
+          type: integer
+          description: Maschinenachse X.
+        iy:
+          type: integer
+          description: Maschinenachse Y.
+        iz:
+          type: integer
+          description: Maschinenachse Z.
+        fileName:
+          type: string
+          description: Dateiname des NC-Programms.
+
+    ToolAssemblyInstance:
+      type: object
+      description: Instanz einer Werkzeugmontage (z. B. für eine Maschine).
+      properties:
+        toolAssemblyInstanceID:
+          type: integer
+          description: Eindeutige ID der Werkzeugmontage.
+        deactivationDate:
+          type: string
+          format: date-time
+          description: Deaktivierungsdatum.
+        currUsage:
+          type: integer
+          description: Aktuelle Nutzungsanzahl.
+        maxUsage:
+          type: integer
+          description: Maximale Nutzungsanzahl.
+        currToolpathLength:
+          type: integer
+          description: Aktuelle Werkzeugweg-Länge.
+        maxToolpathLength:
+          type: integer
+          description: Maximale Werkzeugweg-Länge.
+        state:
+          type: string
+          format: uuid
+          description: Status der Montage (UUID).
+        locationIDLocation:
+          type: integer
+          description: Verweis auf Location (ID), Lagerort des Werkzeugs.
+        articleIDInstance:
+          type: integer
+          description: Verweis auf Article (ID), Artikel der Werkzeugmontage.
+
+    Repository:
+      type: object
+      description: Zentrales Repository/Container für Revisionen und Metadaten.
+      properties:
+        repositoryID:
+          type: integer
+          description: Eindeutige ID des Repositories.
+
+    FileRevision:
+      type: object
+      description: Einzelne Datei-Revision (z. B. für ein NC-Programm oder einen Artikel).
+      properties:
+        fileRevisionID:
+          type: integer
+          description: Eindeutige ID der Revision.
+        sha1:
+          type: string
+          description: SHA1-Prüfsumme der Datei.
+        sha256:
+          type: string
+          description: SHA256-Prüfsumme der Datei.
+        path:
+          type: string
+          description: Dateipfad.
+        mimeType:
+          type: string
+          description: Mime-Type (z. B. „application/pdf“).
+        size:
+          type: integer
+          description: Dateigröße in Bytes.
+        ncProgramIDRepresentation:
+          type: integer
+          description: Verweis auf NcProgram (ID), referenziertes NC-Programm.
+        machineIDExecutor:
+          type: integer
+          description: Verweis auf Machine (ID), Maschine, die diese Datei nutzt.
+        machineGroupIDExecutor:
+          type: integer
+          description: Verweis auf MachineGroup (ID), Gruppe, die diese Datei nutzt.
+        fileRevisionIDParent:
+          type: integer
+          description: Verweis auf FileRevision (ID), Vorgänger-Revision.
+        createdAt:
+          type: string
+          format: date-time
+          description: Zeitpunkt der Revisionserstellung.
+        thumbnail:
+          type: string
+          format: binary
+          description: Vorschaubild/Thumbnail.
+        thumbnailMimeType:
+          type: string
+          description: Mime-Type des Thumbnails.
+    Machine:
+      type: object
+      description: Repräsentiert eine CNC- oder Fertigungsmaschine im System.
+      properties:
+        machineID:
+          type: integer
+          description: Eindeutige ID der Maschine.
+        name:
+          type: string
+          description: Anzeigename der Maschine.
+        plannedStepIDCursor:
+          type: integer
+          description: Verweis auf PlannedStep (ID), aktueller geplanter Schritt.
+        robotIDServant:
+          type: integer
+          description: Verweis auf Robot (ID), zugeordneter Serviceroboter.
+        articleInstanceIDOwner:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Maschine besitzt diesen Artikel.
+        jobmanagerOperationState:
+          type: string
+          format: uuid
+          description: Betriebszustand der Maschine im Jobmanager (UUID).
+        state:
+          type: string
+          format: uuid
+          description: Allgemeiner Maschinenzustand (UUID).
+        error:
+          type: string
+          description: Fehlertext oder Fehlercode.
+        toolPreselect:
+          type: string
+          format: uuid
+          description: Vorausgewähltes Werkzeug (UUID).
+        handlingState:
+          type: string
+          format: uuid
+          description: Zustand des Handlings (UUID).
+        doorState:
+          type: string
+          format: uuid
+          description: Türzustand (UUID).
+        checkToolBreak:
+          type: string
+          format: uuid
+          description: Werkzeugbruchprüfung (UUID).
+        jobmanagerMode:
+          type: string
+          format: uuid
+          description: Aktueller Modus im Jobmanager (UUID).
+
+    Magazine:
+      type: object
+      description: Lager- oder Werkzeugmagazin für Maschinen, Artikel oder Werkzeuge.
+      properties:
+        magazineID:
+          type: integer
+          description: Eindeutige ID des Magazins.
+        name:
+          type: string
+          description: Anzeigename des Magazins.
+        kind:
+          type: string
+          format: uuid
+          description: Typ/Kategorie des Magazins (UUID).
+        statefulAsLocation:
+          type: boolean
+          description: Gibt an, ob das Magazin als Lagerort gilt.
+        articleInstanceIDOwner:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Besitzer des Magazins.
+        magazineIDParent:
+          type: integer
+          description: Verweis auf Magazine (ID), übergeordnetes Magazin.
+        mountingGateIDOwner:
+          type: integer
+          description: Verweis auf MountingGate (ID), Besitzer des Magazins.
+        machineIDOwner:
+          type: integer
+          description: Verweis auf Machine (ID), Besitzer des Magazins.
+        robotIDOwner:
+          type: integer
+          description: Verweis auf Robot (ID), Besitzer des Magazins.
+        begin:
+          type: string
+          format: date-time
+          description: Startzeitraum der Magazinbelegung.
+        end:
+          type: string
+          format: date-time
+          description: Endzeitraum der Magazinbelegung.
+
+    MagazineElement:
+      type: object
+      description: Einzelnes Fach, Slot oder Lagerplatz in einem Magazin.
+      properties:
+        magazineElementID:
+          type: integer
+          description: Eindeutige ID des Magazinfachs.
+        physicalSlot:
+          type: string
+          description: Physische Position/Bezeichnung im Magazin.
+        name:
+          type: string
+          description: Name/Bezeichnung des Fachs.
+        supervision:
+          type: string
+          format: uuid
+          description: Überwachungsstatus (UUID).
+        articleInstanceIDReservation:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), reservierter Artikel.
+        magazineIDOwner:
+          type: integer
+          description: Verweis auf Magazine (ID), Besitzer des Fachs.
+        boardInteractionMetric:
+          type: integer
+          description: Messwert/Ordnungszahl für Interaktionen.
+        articleIDRequirement:
+          type: integer
+          description: Verweis auf Article (ID), benötigter Artikel.
+
+    Robot:
+      type: object
+      description: Industrieroboter für Handling, Transport, Montage usw.
+      properties:
+        robotID:
+          type: integer
+          description: Eindeutige ID des Roboters.
+        name:
+          type: string
+          description: Anzeigename des Roboters.
+        state:
+          type: string
+          format: uuid
+          description: Aktueller Status des Roboters (UUID).
+        jobmanagerOperationState:
+          type: string
+          format: uuid
+          description: Betriebszustand im Jobmanager (UUID).
+        anchorControlManufacturer:
+          type: string
+          format: uuid
+          description: Herstellersteuerung (UUID).
+        connectionSettings:
+          type: string
+          description: Verbindungseinstellungen.
+        doubleGripperCapability:
+          type: string
+          format: uuid
+          description: Greifer-Fähigkeiten (UUID).
+        error:
+          type: string
+          description: Fehlertext oder Fehlercode.
+        articleInstanceIDOwner:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Besitzer des Roboters.
+
+    Material:
+      type: object
+      description: Rohmaterial, Halbzeug oder Werkstoff im System.
+      properties:
+        materialID:
+          type: integer
+          description: Eindeutige ID des Materials.
+        name:
+          type: string
+          description: Name/Bezeichnung des Materials.
+        isoCmc:
+          type: string
+          description: ISO/CMC-Klassifizierung.
+
+    Pallet:
+      type: object
+      description: Palette als Transportmittel oder Werkstückträger.
+      properties:
+        palletID:
+          type: integer
+          description: Eindeutige ID der Palette.
+        kind:
+          type: string
+          format: uuid
+          description: Palettentyp (UUID).
+        name:
+          type: string
+          description: Name der Palette.
+        height:
+          type: integer
+          description: Höhe (mm).
+        width:
+          type: integer
+          description: Breite (mm).
+        depth:
+          type: integer
+          description: Tiefe (mm).
+        clampingPosition:
+          type: integer
+          description: Spannposition.
+        palletIDParent:
+          type: integer
+          description: Verweis auf Pallet (ID), übergeordnete Palette.
+
+    Transport:
+      type: object
+      description: Transportvorgang für Material, Paletten, Artikelinstanzen o. Ä.
+      properties:
+        transportID:
+          type: integer
+          description: Eindeutige ID des Transports.
+        transportProperties:
+          type: string
+          description: Eigenschaften des Transports (z. B. JSON).
+        transportSequence:
+          type: string
+          format: uuid
+          description: Transportsequenz (UUID).
+        articleInstanceIDCreator:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Ersteller des Transports.
+        mountingGateIDToBeLocation:
+          type: integer
+          description: Verweis auf MountingGate (ID), Zielort.
+        magazineElementIDToBeLocation:
+          type: integer
+          description: Verweis auf MagazineElement (ID), Zielmagazinfach.
+        chuckIDToBeLocation:
+          type: integer
+          description: Verweis auf Chuck (ID), Zielspannfutter.
+        chuckAdapterIDToBeLocation:
+          type: integer
+          description: Verweis auf ChuckAdapter (ID), Ziel-Adapter.
+        articleInstanceIDOwner:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), zu transportierender Artikel.
+
+    Location:
+      type: object
+      description: Ein Lagerplatz, Standort oder eine Position für Artikel, Werkzeuge, Material usw.
+      properties:
+        locationID:
+          type: integer
+          description: Eindeutige ID des Lagerorts.
+        amount:
+          type: integer
+          description: Gelagerte Menge.
+        comment:
+          type: string
+          description: Kommentar oder Zusatzinfo zum Ort.
+        bookingTime:
+          type: string
+          format: date-time
+          description: Zeitpunkt der Buchung/Belegung.
+        statefulBegin:
+          type: string
+          format: date-time
+          description: Beginn eines zustandsbehafteten Zeitraums.
+        statefulEnd:
+          type: string
+          format: date-time
+          description: Ende eines zustandsbehafteten Zeitraums.
+        magazineIDFormerLocation:
+          type: integer
+          description: Verweis auf Magazine (ID), vorheriger Lagerort.
+        magazineElementIDFormerLocation:
+          type: integer
+          description: Verweis auf MagazineElement (ID), vorheriges Fach.
+        chuckIDFormerLocation:
+          type: integer
+          description: Verweis auf Chuck (ID), vorheriges Spannfutter.
+        articleIDOwner:
+          type: integer
+          description: Verweis auf Article (ID), Besitzer des Ortes.
+        articleInstanceIDLocation:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Artikel am Ort.
+        articleInstanceIDFormerLocation:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Artikel im vorherigen Ort.
+        chuckIDRepresentation:
+          type: integer
+          description: Verweis auf Chuck (ID), abgebildetes Spannfutter.
+        magazineIDRepresentation:
+          type: integer
+          description: Verweis auf Magazine (ID), abgebildetes Magazin.
+        magazineElementIDRepresentation:
+          type: integer
+          description: Verweis auf MagazineElement (ID), abgebildetes Fach.
+        articleRequirementIDCreator:
+          type: integer
+          description: Verweis auf ArticleRequirement (ID), Erzeuger dieses Lagerorts.
+
+    TaskModel:
+      type: object
+      description: Repräsentiert eine Aufgabe im Prozess, z. B. einen Arbeitsschritt, eine Bearbeitung oder einen Prüfpunkt.
+      properties:
+        taskID:
+          type: integer
+          description: Eindeutige ID der Aufgabe.
+        name:
+          type: string
+          description: Name oder Bezeichnung der Aufgabe.
+        description:
+          type: string
+          description: Beschreibung oder Zusatzinfos zur Aufgabe.
+        scheduledDuration:
+          type: integer
+          description: Geplante Dauer (Minuten).
+        overlapDuration:
+          type: integer
+          description: Überlappende Bearbeitungsdauer.
+        scheduleState:
+          type: string
+          format: uuid
+          description: Status der Zeitplanung (UUID).
+        taskState:
+          type: string
+          format: uuid
+          description: Status der Aufgabe (UUID).
+        taskRequirementState:
+          type: string
+          description: Status der erforderlichen Aufgaben.
+        structureApprovalState:
+          type: string
+          format: uuid
+          description: Freigabestatus der Aufgabenstruktur (UUID).
+        taskErrorState:
+          type: string
+          format: uuid
+          description: Fehlerstatus (UUID).
+        pendingScheduleAction:
+          type: string
+          format: uuid
+          description: Offene Planungsaktion (UUID).
+        operationSyncTime:
+          type: string
+          format: date-time
+          description: Zeitpunkt der letzten Synchronisation mit dem Vorgang.
+        scheduledStartPlanned:
+          type: string
+          format: date-time
+          description: Geplanter Startzeitpunkt der Aufgabe.
+        taskIDParent:
+          type: integer
+          description: Verweis auf TaskModel (ID), übergeordnete Aufgabe.
+        approvalState:
+          type: string
+          format: uuid
+          description: Freigabestatus der Aufgabe (UUID).
+    Chuck:
+      type: object
+      description: Spannfutter oder Vorrichtung zum Einspannen von Werkstücken.
+      properties:
+        chuckID:
+          type: integer
+          description: Eindeutige ID des Spannfutters.
+        name:
+          type: string
+          description: Name des Spannfutters.
+        x:
+          type: integer
+          description: X-Position.
+        y:
+          type: integer
+          description: Y-Position.
+        z:
+          type: integer
+          description: Z-Position.
+        a:
+          type: integer
+          description: Rotationsachse A.
+        b:
+          type: integer
+          description: Rotationsachse B.
+        c:
+          type: integer
+          description: Rotationsachse C.
+        ncProgramInsertion:
+          type: string
+          description: NC-Programm-Insertionstext.
+        clearingBehaviour:
+          type: string
+          format: uuid
+          description: Räumverhalten (UUID).
+        visibilityStatus:
+          type: string
+          format: uuid
+          description: Sichtbarkeitsstatus (UUID).
+        physicalSlot:
+          type: string
+          description: Physischer Slot/Position.
+        articleInstanceIDOwner:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), zugeordnete Artikelinstanz.
+
+    ChuckAdapter:
+      type: object
+      description: Adapter zwischen Werkstück und Spannfutter.
+      properties:
+        chuckAdapterID:
+          type: integer
+          description: Eindeutige ID des Adapters.
+        name:
+          type: string
+          description: Name des Adapters.
+        chuckIDRequirement:
+          type: integer
+          description: Verweis auf Chuck (ID), benötigtes Spannfutter.
+        articleInstanceIDRequirement:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), erforderliche Instanz.
+        articleInstanceIDOwner:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Besitzer des Adapters.
+
+    MountingGate:
+      type: object
+      description: Zugang, Tor oder Position für die Montage von Werkstücken oder Paletten.
+      properties:
+        mountingGateID:
+          type: integer
+          description: Eindeutige ID des Montagetors.
+        occupied:
+          type: boolean
+          description: Gibt an, ob das Tor belegt ist.
+        state:
+          type: string
+          format: uuid
+          description: Status des Tores (UUID).
+        error:
+          type: string
+          description: Fehlertext oder Fehlercode.
+        plannedStepIDCursor:
+          type: integer
+          description: Verweis auf PlannedStep (ID), aktueller Schritt.
+        articleInstanceIDOwner:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Besitzer des Tores.
+        robotIDServant:
+          type: integer
+          description: Verweis auf Robot (ID), zugeordneter Serviceroboter.
+
+    MountingPosition:
+      type: object
+      description: Konkrete Montageposition für ein Werkstück, z. B. auf Palette oder Maschine.
+      properties:
+        mountingPositionID:
+          type: integer
+          description: Eindeutige ID der Montageposition.
+        state:
+          type: string
+          format: uuid
+          description: Status der Montageposition (UUID).
+        comment:
+          type: string
+          description: Kommentar.
+        begin:
+          type: string
+          format: date-time
+          description: Startzeit der Montage.
+        end:
+          type: string
+          format: date-time
+          description: Endzeit der Montage.
+        x:
+          type: integer
+          description: X-Position.
+        y:
+          type: integer
+          description: Y-Position.
+        z:
+          type: integer
+          description: Z-Position.
+        a:
+          type: integer
+          description: Rotationsachse A.
+        b:
+          type: integer
+          description: Rotationsachse B.
+        c:
+          type: integer
+          description: Rotationsachse C.
+        ix:
+          type: integer
+          description: Interne X-Position.
+        iy:
+          type: integer
+          description: Interne Y-Position.
+        iz:
+          type: integer
+          description: Interne Z-Position.
+        articleInstanceIDOwner:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Besitzer der Montageposition.
+        articleInstanceIDLocation:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), gelagerte Instanz.
+        mountingPositionContextIDInstance:
+          type: integer
+          description: Verweis auf MountingPositionContext (ID), Kontext der Montageposition.
+
+    MountingPositionContext:
+      type: object
+      description: Kontext für Montagepositionen (z. B. verschiedene Spannmittel oder Referenzsysteme).
+      properties:
+        mountingPositionContextID:
+          type: integer
+          description: Eindeutige ID des Montage-Kontexts.
+        name:
+          type: string
+          description: Name/Beschreibung des Kontexts.
+        articleProvisionIDOwner:
+          type: integer
+          description: Verweis auf ArticleProvision (ID), Besitzer des Kontexts.
+
+    PalletInstance:
+      type: object
+      description: Konkrete Instanz einer Palette, ggf. mit Belegung, Status usw.
+      properties:
+        palletInstanceID:
+          type: integer
+          description: Eindeutige ID der Paletteninstanz.
+        name:
+          type: string
+          description: Name/Bezeichnung der Instanz.
+        description:
+          type: string
+          description: Beschreibung.
+        approvalState:
+          type: string
+          format: uuid
+          description: Freigabestatus (UUID).
+        magazineElementIDLocation:
+          type: integer
+          description: Verweis auf MagazineElement (ID), Standort im Magazin.
+        chuckIDLocation:
+          type: integer
+          description: Verweis auf Chuck (ID), Standort im Spannfutter.
+        palletIDInstance:
+          type: integer
+          description: Verweis auf Pallet (ID), Palettenmodell dieser Instanz.
+
+    Identification:
+      type: object
+      description: Eindeutige Identifikation (z. B. Barcode, RFID, UVID, etc.) für Artikel, Fächer, Magazine usw.
+      properties:
+        identificationID:
+          type: integer
+          description: Eindeutige ID der Identifikation.
+        identificationString:
+          type: string
+          description: Wert der Identifikation (z. B. Barcode, UVID).
+        uvidSha256:
+          type: string
+          format: binary
+          description: SHA256-Hash des UVID.
+        articleInstanceIDOwner:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Besitzer der Identifikation.
+        chuckIDOwner:
+          type: integer
+          description: Verweis auf Chuck (ID), zugeordnetes Spannfutter.
+        magazineElementIDOwner:
+          type: integer
+          description: Verweis auf MagazineElement (ID), zugeordnetes Magazinfach.
+        magazineIDOwner:
+          type: integer
+          description: Verweis auf Magazine (ID), zugeordnetes Magazin.
+
+    LocationReservation:
+      type: object
+      description: Reservierung eines Lagerorts (für geplante Belegung, Einlagerung, Entnahme etc.).
+      properties:
+        locationReservationID:
+          type: integer
+          description: Eindeutige ID der Reservierung.
+        amount:
+          type: integer
+          description: Reservierte Menge.
+        reservationTime:
+          type: string
+          format: date-time
+          description: Zeitpunkt der Reservierung.
+        plannedWithdraw:
+          type: string
+          format: date-time
+          description: Geplante Entnahme.
+        bookingTime:
+          type: string
+          format: date-time
+          description: Zeitpunkt der Buchung.
+        comment:
+          type: string
+          description: Kommentar zur Reservierung.
+
+    LocationReservationTask:
+      type: object
+      description: Verknüpfung zwischen Reservierung und Task.
+      properties:
+        locationReservationTaskID:
+          type: integer
+          description: Eindeutige ID der Verknüpfung.
+        locationID:
+          type: integer
+          description: Verweis auf Location (ID), betroffener Lagerort.
+        taskID:
+          type: integer
+          description: Verweis auf TaskModel (ID), betroffene Aufgabe.
+    PostProcessingGroup:
+      type: object
+      description: Gruppe für Nachbearbeitungen (z. B. Oberflächenbehandlung, Reinigung etc.).
+      properties:
+        postProcessingGroupID:
+          type: integer
+          description: Eindeutige ID der Nachbearbeitungsgruppe.
+        name:
+          type: string
+          description: Name der Gruppe.
+        kind:
+          type: string
+          format: uuid
+          description: Typ/Kategorie der Gruppe (UUID).
+
+    PostProcessing:
+      type: object
+      description: Einzelner Nachbearbeitungsschritt oder -prozess.
+      properties:
+        postProcessingID:
+          type: integer
+          description: Eindeutige ID der Nachbearbeitung.
+        name:
+          type: string
+          description: Name der Nachbearbeitung.
+        description:
+          type: string
+          description: Beschreibung des Schrittes.
+        timePlanned:
+          type: integer
+          description: Geplante Dauer (Minuten).
+        xOffset:
+          type: integer
+          description: X-Versatz.
+        yOffset:
+          type: integer
+          description: Y-Versatz.
+        zOffset:
+          type: integer
+          description: Z-Versatz.
+        repositoryID:
+          type: integer
+          description: Verweis auf Repository (ID), Besitzer.
+        palletIDRequirement:
+          type: integer
+          description: Verweis auf Pallet (ID), benötigte Palette.
+        operationIDOwner:
+          type: integer
+          description: Verweis auf Operation (ID), Besitzer.
+        lotIDOwner:
+          type: integer
+          description: Verweis auf Lot (ID), Besitzer.
+        postProcessingGroupIDInstance:
+          type: integer
+          description: Verweis auf PostProcessingGroup (ID), Gruppenzugehörigkeit.
+
+    MillingAction:
+      type: object
+      description: Aktion im Zusammenhang mit einer Fräsoperation.
+      properties:
+        millingActionID:
+          type: integer
+          description: Eindeutige ID der Fräsaktion.
+        begin:
+          type: string
+          format: date-time
+          description: Startzeitpunkt der Fräsaktion.
+        duration:
+          type: integer
+          description: Dauer der Fräsaktion (Minuten).
+        end:
+          type: string
+          format: date-time
+          description: Endzeitpunkt der Fräsaktion.
+        ncProgramIDRepresentation:
+          type: integer
+          description: Verweis auf NcProgram (ID), ausgeführtes NC-Programm.
+
+    FileRevisionHistoryOperation:
+      type: object
+      description: Verknüpfung zwischen Datei-Revision und Operation für die Historie.
+      properties:
+        operationHistoryFileRevisionID:
+          type: integer
+          description: Eindeutige ID der Verknüpfung.
+        operationID:
+          type: integer
+          description: Verweis auf Operation (ID), Vorgang.
+        fileRevisionID:
+          type: integer
+          description: Verweis auf FileRevision (ID), Datei-Revision.
+
+    FileRevisionRequirementOperation:
+      type: object
+      description: Verknüpfung zwischen Datei-Revision und Operation für Anforderungen.
+      properties:
+        operationRequirementFileRevisionID:
+          type: integer
+          description: Eindeutige ID der Verknüpfung.
+        operationID:
+          type: integer
+          description: Verweis auf Operation (ID), Vorgang.
+        fileRevisionID:
+          type: integer
+          description: Verweis auf FileRevision (ID), Datei-Revision.
+
+    MachineMemberPostProcessingGroup:
+      type: object
+      description: Verknüpfung zwischen Maschine und Nachbearbeitungsgruppe.
+      properties:
+        machineMemberPostProcessingGroupID:
+          type: integer
+          description: Eindeutige ID der Verknüpfung.
+        machineID:
+          type: integer
+          description: Verweis auf Machine (ID), Maschine.
+        postProcessingGroupID:
+          type: integer
+          description: Verweis auf PostProcessingGroup (ID), Nachbearbeitungsgruppe.
+
+    ApprovalItemTypeCollection:
+      type: object
+      description: Sammlung von ApprovalItemTypes für spezielle Vorlagen.
+      properties:
+        approvalItemTypeCollectionID:
+          type: integer
+          description: Eindeutige ID der Sammlung.
+        name:
+          type: string
+          description: Name der Sammlung.
+        description:
+          type: string
+          description: Beschreibung der Sammlung.
+        type:
+          type: string
+          format: uuid
+          description: Typ/Kategorie (UUID).
+        visibilityState:
+          type: string
+          format: uuid
+          description: Sichtbarkeitsstatus (UUID).
+        metric:
+          type: integer
+          description: Ordnungswert/Messwert der Sammlung.
+
+    ApprovalItemTypeMemberApprovalItemTypeCollection:
+      type: object
+      description: Verknüpfung zwischen ApprovalItemType und einer Sammlung.
+      properties:
+        approvalItemTypeMemberApprovalItemTypeCollectionID:
+          type: integer
+          description: Eindeutige ID der Verknüpfung.
+        approvalItemTypeCollectionID:
+          type: integer
+          description: Verweis auf ApprovalItemTypeCollection (ID), Sammlung.
+        approvalItemTypeID:
+          type: integer
+          description: Verweis auf ApprovalItemType (ID), Typ.
+
+    ApprovalItemTypeCollectionProposalTechnology:
+      type: object
+      description: Zuordnung einer ApprovalItemTypeCollection zu einer Technologie (für Vorschläge).
+      properties:
+        approvalItemTypeCollectionProposalTechnologyID:
+          type: integer
+          description: Eindeutige ID der Zuordnung.
+        approvalItemTypeCollectionID:
+          type: integer
+          description: Verweis auf ApprovalItemTypeCollection (ID), Sammlung.
+        technologyID:
+          type: integer
+          description: Verweis auf Technology (ID), zugeordnete Technologie.
+    PlannedStep:
+      type: object
+      description: Geplanter Bearbeitungsschritt, z. B. für Maschinen, Roboter oder andere Ressourcen.
+      properties:
+        plannedStepID:
+          type: integer
+          description: Eindeutige ID des geplanten Schritts.
+        type:
+          type: string
+          format: uuid
+          description: Typ des geplanten Schritts (UUID).
+        plannedStepStatus:
+          type: string
+          format: uuid
+          description: Status des geplanten Schritts (UUID).
+        begin:
+          type: string
+          format: date-time
+          description: Geplanter Startzeitpunkt.
+        duration:
+          type: integer
+          description: Geplante Dauer (Minuten).
+        end:
+          type: string
+          format: date-time
+          description: Geplantes Ende.
+        completionStatus:
+          type: string
+          format: uuid
+          description: Abschlussstatus (UUID).
+        transportIDRepresentation:
+          type: integer
+          description: Verweis auf Transport (ID), repräsentierter Transport.
+        workpieceIDRequirement:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), benötigtes Werkstück.
+        toolAssemblyInstanceIDRequirement:
+          type: integer
+          description: Verweis auf ToolAssemblyInstance (ID), benötigte Werkzeugmontage.
+        operationIDRepresentation:
+          type: integer
+          description: Verweis auf Operation (ID), abgebildeter Vorgang.
+        taskIDOwner:
+          type: integer
+          description: Verweis auf TaskModel (ID), Besitzer/Aufgabe.
+        plannedStepIDPredecessor:
+          type: integer
+          description: Verweis auf PlannedStep (ID), Vorgängerschritt.
+        ncProgramIDRepresentation:
+          type: integer
+          description: Verweis auf NcProgram (ID), ausgeführtes NC-Programm.
+        articleIDRepresentation:
+          type: integer
+          description: Verweis auf Article (ID), abgebildeter Artikel.
+        machineIDExecutor:
+          type: integer
+          description: Verweis auf Machine (ID), ausführende Maschine.
+        activityIDInstance:
+          type: integer
+          description: Verweis auf Activity (ID), Instanz der Aktivität.
+
+    RawMaterialShape:
+      type: object
+      description: Geometrische Form eines Rohmaterials (Maße etc.).
+      properties:
+        rawMaterialShapeID:
+          type: integer
+          description: Eindeutige ID der Form.
+        x:
+          type: integer
+          description: X-Maß (mm).
+        y:
+          type: integer
+          description: Y-Maß (mm).
+        z:
+          type: integer
+          description: Z-Maß (mm).
+        articleIDReference:
+          type: integer
+          description: Verweis auf Article (ID), Referenzartikel für die Form.
+
+    PlanningVariant:
+      type: object
+      description: Alternative Planungsvariante, z. B. für Material oder Fertigungsweg.
+      properties:
+        planningVariantID:
+          type: integer
+          description: Eindeutige ID der Variante.
+        kind:
+          type: string
+          format: uuid
+          description: Typ der Variante (UUID).
+        name:
+          type: string
+          description: Name der Variante.
+        index:
+          type: integer
+          description: Ordnungswert/Index.
+
+    Action:
+      type: object
+      description: Ausgeführte Aktion im System, z. B. ein Transport, eine Bearbeitung oder ein Ereignis.
+      properties:
+        actionID:
+          type: integer
+          description: Eindeutige ID der Aktion.
+        type:
+          type: string
+          format: uuid
+          description: Typ der Aktion (UUID).
+        begin:
+          type: string
+          format: date-time
+          description: Startzeitpunkt der Aktion.
+        end:
+          type: string
+          format: date-time
+          description: Endzeitpunkt der Aktion.
+        duration:
+          type: integer
+          description: Dauer der Aktion (Minuten).
+        completionStatus:
+          type: string
+          format: uuid
+          description: Status (UUID).
+        activityIDInstance:
+          type: integer
+          description: Verweis auf Activity (ID), Instanz der Aktivität.
+        articleInstanceIDCreator:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Ersteller der Aktion.
+        articleInstanceIDExecutor:
+          type: integer
+          description: Verweis auf ArticleInstance (ID), Ausführender der Aktion.
+        taskIDOwner:
+          type: integer
+          description: Verweis auf TaskModel (ID), zugeordnete Aufgabe.
+        ncProgramIDRepresentation:
+          type: integer
+          description: Verweis auf NcProgram (ID), NC-Programm dieser Aktion.
+
+    RerunAction:
+      type: object
+      description: Wiederholung einer vorherigen Aktion (mit JSON-Daten für den Ablauf).
+      properties:
+        rerunActionID:
+          type: integer
+          description: Eindeutige ID der Wiederholungsaktion.
+        type:
+          type: string
+          format: uuid
+          description: Typ der Wiederholungsaktion (UUID).
+        rerunJson:
+          type: string
+          description: Ablauf als JSON.
+
+# Ende aller Schemata
