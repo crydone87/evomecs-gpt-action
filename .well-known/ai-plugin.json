@@ -1,9 +1,9 @@
 {
   "schema_version": "v1",
-  "name_for_human": "EVOMECS Data",
-  "name_for_model": "evomecs_data",
-  "description_for_human": "Abruf von Artikelinstanzen über die EVOMECS API",
-  "description_for_model": "Liefere eine Liste von Artikelinstanzen aus der EVOMECS Datenbank.",
+  "name_for_human": "EVOMECS Exporter",
+  "name_for_model": "evomecsExporter",
+  "description_for_human": "REST API für die wichtigsten EVOMECS Datenstrukturen.",
+  "description_for_model": "API zur Abfrage von Orders, Artikeln, Maschinen, Freigaben usw. aus dem EVOMECS System. Alle Felder und Verweise sind ausführlich dokumentiert.",
   "auth": {
     "type": "none"
   },
