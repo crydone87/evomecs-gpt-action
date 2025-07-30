@@ -9,7 +9,7 @@
   },
   "api": {
     "type": "openapi",
-    "url": "https://crydone87.github.io/evomecs-gpt-action/openapi.json",
+    "url": "https://crydone87.github.io/evomecs-gpt-action/openapi.yaml",
     "is_user_authenticated": false
   },
   "logo_url": "https://crydone87.github.io/evomecs-gpt-action/logo.png",
